@@ -26,7 +26,7 @@ module comparator(
     input bit rst
 );
 byte indexMax = -1;
-int max = 0;
+int max = -2147483647;
 reg temp[10];
 
 always_comb begin
@@ -40,6 +40,10 @@ always_comb begin
         for(int i = 0; i < 10; i++) begin
             if(i == indexMax) temp[i] = 1;
             else temp[i] = 0;
+        end
+    end else begin
+        for(int i = 0; i < 10; i++) begin
+            temp[i] = 0;
         end
     end
 end

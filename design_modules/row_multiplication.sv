@@ -32,18 +32,18 @@ module row_multiplication
     input int rowPtr[n + 1],
     input bit rst
 );
-
-int temp[16];
+int curr, prev;
 always_comb begin
+    curr = 0; prev = 0;
 	if(rst == 0) begin
 	   for(int i = rowPtr[rowIndex], j = 0; i < rowPtr[rowIndex+1] && j < 16; i = i + 1, j = j + 1) begin
-		    temp[j] = val[i] * vector[col[i]];
+		     curr = prev + val[i] * vector[col[i]];
+		     prev = curr;
 	   end
-	   
-	   rowOutput = temp[0] + temp[1] + temp[2] + temp[3] + temp[4] 
-	               + temp[5] + temp[6] + temp[7] + temp[8] + temp[9]
-	               + temp[10] + temp[11] + temp[12] + temp[13] + temp[14] 
-	               + temp[15];  
+	   rowOutput = prev;
+	 end
+	 else begin 
+	   rowOutput = 0;
 	 end
 end
 endmodule

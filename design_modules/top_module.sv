@@ -22,38 +22,44 @@
 
 module top_module(
     output out[10],
-    input flag
+    input [1:0] flag
 );
 
-int val1[23] = '{229, 287, -233, 196, 290, 257, -344, -265, 247, 237, -254, -215, -240, -215, -216, -206, 229, 216, 231, 237, 308, 204, -202};
-int col1[23] = '{9, 15, 23, 1, 2, 3, 9, 9, 3, 15, 2, 3, 14, 15, 18, 19, 9, 11, 5, 15, 22, 23, 15};
-int rowPtr1[11] = '{0, 3, 7, 7, 8, 9, 10, 16, 18, 22, 23};
+int val1[23] = '{237, 216, 311, -247, -425, -317, 213, 213, -245, -280, -201, -265, -345, -313, -259, 205, 243, 246, 320, 227, 306, -332, 268};
+int col1[23] = '{2, 5, 15, 1, 2, 3, 9, 23, 1, 2, 3, 15, 18, 19, 19, 21, 22, 2, 3, 3, 9, 9, 9};
+int rowPtr1[11] = '{0, 2, 3, 8, 14, 17, 19, 21, 22, 22, 23};
+int bias1[10] = '{3621, 1084, 4568, 9229, 3447, 3973, 3135, 6348, 6881, 4041};
 
-int val2[9] = '{157, -207, -203, 228, -207, 171, -318, -214, -172};
-int col2[9] = '{2, 6, 2, 6, 7, 1, 8, 4, 0};
-int rowPtr2[11] = '{0, 2, 5, 5, 5, 5, 5, 7, 8, 8, 9};
+int val2[9] = '{-164, 270, -259, -193, -263, -191, -282, 219, -182};
+int col2[9] = '{2, 3, 4, 6, 4, 1, 2, 5, 5};
+int rowPtr2[11] = '{0, 1, 4, 5, 5, 5, 5, 8, 9, 9, 9};
+int bias2[10] = '{4978, 36, 9509, -2482, -2818, -3539, -2862, 5141, -2885, -2569};
 
-int vector[25] = '{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 65, 0, 0, 0, 0, 62, 0, 0, 0, 0, 0, 0, 0}; 
+int vector[25];
 
-int bias1[10] = '{30, 3433, 4762, 4158, 564, -44, 8480, 3861, 2136, -138};
-int bias2[10] = '{-215, 8327, 582, -1670, 1669, -94, 874, 670, -1667, -560};
+// Image 7
+int vector1[25] = '{0, 0, 0, 0, 0, 0, 95, 69, 68, 0, 0, 0, 0, 53, 0, 0, 0, 51, 0, 0, 0, 0, 53, 0, 0}; 
+// Image 1
+int vector2[25] = '{0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 76, 0, 0, 0, 0, 72, 0, 0, 0, 0, 6, 0, 0};
+// Image 6
+int vector3[25] = '{0, 0, 10, 0, 0, 0, 8, 0, 0, 0, 0, 95, 89, 0, 0, 0, 94, 17, 84, 0, 0, 0, 0, 0, 0};
 
-int result1[10], result1a[10], result1b[10], result2[10], result2a[10], result2b[10];
+int result1[10], result1a[10], result1b[10], result2[10], result2a[10];
 
-int i = 0;
-bit rst1 = 1, rst1a = 1, rst1b = 1, rst2 = 1, rst2a = 1, rst2b = 1, rst3 = 1;
+// int i = 0;
+bit rst = 1;
 
-matrix_multiplication #(.n(10), .m(25), .nnz(23)) inst1(.result(result1), .vector(vector), .val(val1), .col(col1), .rowPtr(rowPtr1), .rst(rst1));
+matrix_multiplication #(.n(10), .m(25), .nnz(23)) inst1(.result(result1), .vector(vector), .val(val1), .col(col1), .rowPtr(rowPtr1), .rst(rst));
 
-bias_adder inst1a (.out(result1a), .in(result1), .bias(bias1), .rst(rst1a));
+bias_adder inst1a (.out(result1a), .in(result1), .bias(bias1), .rst(rst));
 
-activation_function inst1b(.out(result1b), .in(result1a), .rst(rst1b));
+activation_function inst1b(.out(result1b), .in(result1a), .rst(rst));
 
-matrix_multiplication #(.n(10), .m(10), .nnz(9)) inst2(.result(result2), .vector(result1b), .val(val2), .col(col2), .rowPtr(rowPtr2), .rst(rst2));
+matrix_multiplication #(.n(10), .m(10), .nnz(9)) inst2(.result(result2), .vector(result1b), .val(val2), .col(col2), .rowPtr(rowPtr2), .rst(rst));
 
-bias_adder inst2a(.out(result2a), .in(result2), .bias(bias2), .rst(rst2a));
+bias_adder inst2a(.out(result2a), .in(result2), .bias(bias2), .rst(rst));
 
-comparator inst3 (.out(out), .in(result2a), .rst(rst3));
+comparator inst3 (.out(out), .in(result2a), .rst(rst));
 
 //always @(posedge clk && flag == 0) begin
 //    vector[i] = vector_element;
@@ -63,15 +69,23 @@ comparator inst3 (.out(out), .in(result2a), .rst(rst3));
 //    end
 //end
 
-always_comb begin
-    if(flag == 1) begin
-        rst1 = 0;
-        rst1a = 0;
-        rst1b = 0;
-        rst2 = 0;
-        rst2a = 0;
-        rst2b = 0;
-        rst3 = 0;
-    end
+always @(flag) begin
+        case(flag)
+            0: begin
+                rst = 1;
+            end
+            1: begin 
+                vector = vector1;
+                rst = 0;
+            end  
+            2: begin 
+                vector = vector2;
+                rst = 0;
+            end  
+            3: begin 
+                vector = vector3;
+                rst = 0;
+            end  
+        endcase
 end
 endmodule

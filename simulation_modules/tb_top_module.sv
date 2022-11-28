@@ -22,12 +22,17 @@
 
 module tb_top_module;
 bit out[10];
-bit flag = 0;
+bit [1:0] flag;
 
 top_module inst0 (.out(out), .flag(flag));
 
 initial begin 
-    #10 flag = 1;
+    flag = 0;
+    #100 flag = 1;
+    #100 flag = 0;
+    #100 flag = 2;
+    #100 flag = 0;
+    #100 flag = 3;
 end
 
 endmodule

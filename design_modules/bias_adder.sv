@@ -31,6 +31,10 @@ always_comb begin
         for(int i = 0; i < 10; i++) begin
             out[i] = in[i] + bias[i];
         end
+    end else begin
+        for(int i = 0; i < 10; i++) begin
+            out[i] = 0;
+        end
     end
 end
 endmodule
