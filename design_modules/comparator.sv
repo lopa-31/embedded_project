@@ -21,13 +21,13 @@
 
 
 module comparator(
-    output out[10],
+    output bit [9:0] out,
+    output bit [3:0] out_num,
     input int in[10],
     input bit rst
 );
-byte indexMax = -1;
+bit [3:0] indexMax = 10;
 int max = -2147483647;
-reg temp[10];
 
 always_comb begin
     if(rst == 0) begin
@@ -38,15 +38,15 @@ always_comb begin
             end
         end
         for(int i = 0; i < 10; i++) begin
-            if(i == indexMax) temp[i] = 1;
-            else temp[i] = 0;
+            if(i == indexMax) out[i] = 1;
+            else out[i] = 0;
         end
     end else begin
         for(int i = 0; i < 10; i++) begin
-            temp[i] = 0;
+            out[i] = 0;
         end
     end
+    out_num = indexMax;
 end
 
-assign out = temp;
 endmodule

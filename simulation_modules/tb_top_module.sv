@@ -21,10 +21,12 @@
 
 
 module tb_top_module;
-bit out[10];
-bit [1:0] flag;
+bit [9:0] out;
+bit [6:0] led_out;
+bit activate_anode;
+bit [2:0] flag;
 
-top_module inst0 (.out(out), .flag(flag));
+top_module inst0 (.out(out), .led_out(led_out), .activate_anode(activate_anode), .flag(flag));
 
 initial begin 
     flag = 0;
@@ -33,6 +35,7 @@ initial begin
     #100 flag = 2;
     #100 flag = 0;
     #100 flag = 3;
+    #100 flag = 0;
 end
 
 endmodule

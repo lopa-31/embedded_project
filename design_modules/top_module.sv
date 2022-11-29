@@ -21,8 +21,10 @@
 
 
 module top_module(
-    output out[10],
-    input [1:0] flag
+    output [9:0] out,
+    output [6:0] led_out,
+    output reg activate_anode,
+    input [2:0] flag
 );
 
 int val1[23] = '{237, 216, 311, -247, -425, -317, 213, 213, -245, -280, -201, -265, -345, -313, -259, 205, 243, 246, 320, 227, 306, -332, 268};
@@ -43,11 +45,18 @@ int vector1[25] = '{0, 0, 0, 0, 0, 0, 95, 69, 68, 0, 0, 0, 0, 53, 0, 0, 0, 51, 0
 int vector2[25] = '{0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 76, 0, 0, 0, 0, 72, 0, 0, 0, 0, 6, 0, 0};
 // Image 6
 int vector3[25] = '{0, 0, 10, 0, 0, 0, 8, 0, 0, 0, 0, 95, 89, 0, 0, 0, 94, 17, 84, 0, 0, 0, 0, 0, 0};
+// Image 0
+int vector4[25] = '{0, 0, 0, 0, 0, 0, 11, 99, 81, 0, 0, 7, 0, 0, 29, 0, 97, 57, 93, 0, 0, 0, 0, 0, 0};
+//Image 2
+int vector5[25] = '{0, 0, 2, 0, 0, 0, 2, 0, 93, 0, 0, 0, 0, 17, 0, 0, 99, 91, 97, 0, 0, 0, 0, 0, 0}; 
+
+
 
 int result1[10], result1a[10], result1b[10], result2[10], result2a[10];
 
 // int i = 0;
 bit rst = 1;
+bit[3:0] out_num = 10;
 
 matrix_multiplication #(.n(10), .m(25), .nnz(23)) inst1(.result(result1), .vector(vector), .val(val1), .col(col1), .rowPtr(rowPtr1), .rst(rst));
 
@@ -59,7 +68,9 @@ matrix_multiplication #(.n(10), .m(10), .nnz(9)) inst2(.result(result2), .vector
 
 bias_adder inst2a(.out(result2a), .in(result2), .bias(bias2), .rst(rst));
 
-comparator inst3 (.out(out), .in(result2a), .rst(rst));
+comparator inst3 (.out(out), .out_num(out_num), .in(result2a), .rst(rst));
+
+seven_segment inst4 (.led_out(led_out), .in(out_num), .rst(rst));
 
 //always @(posedge clk && flag == 0) begin
 //    vector[i] = vector_element;
@@ -70,22 +81,26 @@ comparator inst3 (.out(out), .in(result2a), .rst(rst));
 //end
 
 always @(flag) begin
-        case(flag)
-            0: begin
-                rst = 1;
-            end
-            1: begin 
-                vector = vector1;
-                rst = 0;
-            end  
-            2: begin 
-                vector = vector2;
-                rst = 0;
-            end  
-            3: begin 
-                vector = vector3;
-                rst = 0;
-            end  
-        endcase
+    if(flag == 1) begin
+        vector = vector1;
+        rst = 0;
+    end else if(flag == 2) begin
+        vector = vector2;
+        rst = 0;
+    end else if(flag == 3) begin
+        vector = vector3;
+        rst = 0;
+    end else if(flag == 4) begin
+        vector = vector4;
+        rst = 0;
+    end else if(flag == 5) begin
+        vector = vector5;
+        rst = 0;
+    end else  begin
+        rst = 1;
+    end 
 end
+
+always @(flag or rst or led_out) activate_anode = rst; 
+
 endmodule
