@@ -23,7 +23,7 @@
 module top_module(
     output [9:0] out,
     output [6:0] led_out,
-    output reg activate_anode,
+    output reg [3:0] activate_anode,
     input [2:0] flag
 );
 
@@ -56,7 +56,6 @@ int result1[10], result1a[10], result1b[10], result2[10], result2a[10];
 
 // int i = 0;
 bit rst = 1;
-bit[3:0] out_num = 10;
 
 matrix_multiplication #(.n(10), .m(25), .nnz(23)) inst1(.result(result1), .vector(vector), .val(val1), .col(col1), .rowPtr(rowPtr1), .rst(rst));
 
@@ -68,9 +67,9 @@ matrix_multiplication #(.n(10), .m(10), .nnz(9)) inst2(.result(result2), .vector
 
 bias_adder inst2a(.out(result2a), .in(result2), .bias(bias2), .rst(rst));
 
-comparator inst3 (.out(out), .out_num(out_num), .in(result2a), .rst(rst));
+comparator inst3 (.out(out), .in(result2a), .rst(rst));
 
-seven_segment inst4 (.led_out(led_out), .in(out_num), .rst(rst));
+seven_segment inst4 (.led_out(led_out), .in(out), .rst(rst));
 
 //always @(posedge clk && flag == 0) begin
 //    vector[i] = vector_element;
@@ -81,19 +80,19 @@ seven_segment inst4 (.led_out(led_out), .in(out_num), .rst(rst));
 //end
 
 always @(flag) begin
-    if(flag == 1) begin
+    if(flag == 3'b001) begin
         vector = vector1;
         rst = 0;
-    end else if(flag == 2) begin
+    end else if(flag == 3'b010) begin
         vector = vector2;
         rst = 0;
-    end else if(flag == 3) begin
+    end else if(flag == 3'b011) begin
         vector = vector3;
         rst = 0;
-    end else if(flag == 4) begin
+    end else if(flag == 3'b100) begin
         vector = vector4;
         rst = 0;
-    end else if(flag == 5) begin
+    end else if(flag == 3'b101) begin
         vector = vector5;
         rst = 0;
     end else  begin
@@ -101,6 +100,9 @@ always @(flag) begin
     end 
 end
 
-always @(flag or rst or led_out) activate_anode = rst; 
+always @(flag or rst or led_out) begin
+    if(rst == 0) activate_anode = 4'b1011;
+    else activate_anode = 4'b1111;
+end 
 
 endmodule

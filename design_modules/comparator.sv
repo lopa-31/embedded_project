@@ -22,11 +22,10 @@
 
 module comparator(
     output bit [9:0] out,
-    output bit [3:0] out_num,
     input int in[10],
     input bit rst
 );
-bit [3:0] indexMax = 10;
+bit [3:0] indexMax = -1;
 int max = -2147483647;
 
 always_comb begin
@@ -46,7 +45,6 @@ always_comb begin
             out[i] = 0;
         end
     end
-    out_num = indexMax;
 end
 
 endmodule

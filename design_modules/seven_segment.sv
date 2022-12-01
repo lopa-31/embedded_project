@@ -22,21 +22,21 @@
 
 module seven_segment(
     output reg [6:0] led_out,
-    input bit [3:0] in,
+    input bit [9:0] in,
     input bit rst
 );
 always_comb begin
     if(rst == 0) begin
-        if(in == 0) led_out = 7'b0000001;
-        else if(in == 1) led_out = 7'b1001111;
-        else if(in == 2) led_out = 7'b0010010;  
-        else if(in == 3) led_out = 7'b0000110;
-        else if(in == 4) led_out = 7'b1001100;
-        else if(in == 5) led_out = 7'b0100100;
-        else if(in == 6) led_out = 7'b0100000;
-        else if(in == 7) led_out = 7'b0001111;
-        else if(in == 8) led_out = 7'b0000000;
-        else if(in == 9) led_out = 7'b0000100;
+        if(in[0] == 1) led_out = 7'b0000001;
+        else if(in[1] == 1) led_out = 7'b1001111;
+        else if(in[2] == 1) led_out = 7'b0010010;  
+        else if(in[3] == 1) led_out = 7'b0000110;
+        else if(in[4] == 1) led_out = 7'b1001100;
+        else if(in[5] == 1) led_out = 7'b0100100;
+        else if(in[6] == 1) led_out = 7'b0100000;
+        else if(in[7] == 1) led_out = 7'b0001111;
+        else if(in[8] == 1) led_out = 7'b0000000;
+        else if(in[9] == 1) led_out = 7'b0000100;
         // else led_out = 7'b1111111;   
     end
 end
